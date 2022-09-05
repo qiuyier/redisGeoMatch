@@ -1,0 +1,2 @@
+# redisGeoMatch
+基于redis的geo方法实现距离范围内匹配
