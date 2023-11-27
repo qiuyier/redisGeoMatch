@@ -30,13 +30,15 @@ $redis->geoAdd('distance_pool', $startLng, $startLat, 'car_id_' . 1 . '_start');
 $redis->geoAdd('distance_pool', $arriveLng, $arriveLat, 'car_id_' . 1 . '_arrive');
 $oriDistance = $redis->geoDist('distance_pool', 'car_id_' . 1 . '_start', 'car_id_' . 1 . '_arrive', 'km');
 
-// 获取以车源出发点为中心200km内满足的货源出发点数据
-$start = $redis->geoRadius('goods_start_coordinate', $startLng, $startLat, 200, 'km', ['WITHCORD']);
+// 获取以车源出发点为中心200km内满足的货源出发点数据 ['WITHCOORD']: 这是可选参数，表示要返回每个匹配的地理位置点的坐标
+//$start = $redis->geoRadius('goods_start_coordinate', $startLng, $startLat, 200, 'km', ['WITHCOORD']);
+$start = $redis->geoRadius('goods_start_coordinate', $startLng, $startLat, 200, 'km');
 
 // 获取以车源目的点为中心200km内满足的货源目的点数据
-$arrive = $redis->geoRadius('goods_arrive_coordinate', $arriveLng, $arriveLat, 200, 'km', ['WITHCORD']);
+$arrive = $redis->geoRadius('goods_arrive_coordinate', $arriveLng, $arriveLat, 200, 'km');
 
-//取交集，即为匹配中的货源信息
+// 取交集，即为匹配中的货源信息
 $match = array_intersect($start, $arrive);
 
-
+// 删除指定经纬度
+$redis->zRem('goods_arrive_coordinate','goods_id_' . 1,'goods_id_' . 2);
